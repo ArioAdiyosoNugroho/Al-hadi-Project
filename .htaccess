@@ -1,0 +1,10 @@
+RewriteEngine On
+# Penting: Sesuaikan RewriteBase dengan path folder kamu dari localhost
+RewriteBase /KLIEN/REVISI/Alhadi
+
+# Jangan proses folder assets, images, dll ke index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Hilangkan index.php
+RewriteRule ^(.*)$ index.php/$1 [L]
