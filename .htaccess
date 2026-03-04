@@ -1,6 +1,6 @@
 RewriteEngine On
 # Penting: Sesuaikan RewriteBase dengan path folder kamu dari localhost
-RewriteBase /KLIEN/REVISI/Alhadi
+RewriteBase /KLIEN/alhadi
 
 # Jangan proses folder assets, images, dll ke index.php
 RewriteCond %{REQUEST_FILENAME} !-f
