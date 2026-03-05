@@ -1,6 +1,29 @@
+<style>
+.aspect-row-card {
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    background: #fff;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.aspect-row-card:hover {
+    box-shadow: 0 3px 10px rgba(105,108,255,0.08);
+    border-color: #d5d6ff;
+}
+.condition-btn-group .btn {
+    font-size: 0.78rem;
+    padding: 4px 10px;
+}
+.condition-btn-group .btn.active {
+    font-weight: 700;
+}
+</style>
+
 <!-- Content -->
 <div class="container-xxl flex-grow-1 container-p-y">
 
+    <!-- Header -->
     <div class="mb-4">
         <h4 class="fw-bold mb-1">
             <span class="text-muted fw-light">
@@ -21,7 +44,7 @@
         <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
 
         <div class="row">
-            <!-- Kolom Kiri -->
+            <!-- ===== Kolom Info ===== -->
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm h-100">
                     <div class="card-header py-3">
@@ -30,7 +53,6 @@
                     <div class="card-body">
 
                         <?php if ($selected_class): ?>
-                        <!-- Mode: dari tombol "Nilai Hari Ini" — kelas sudah diketahui -->
                         <input type="hidden" name="class_id" value="<?= $selected_class->id ?>">
                         <div class="mb-4">
                             <label class="form-label fw-semibold">Kelas</label>
@@ -44,15 +66,12 @@
                                 </div>
                             </div>
                         </div>
-
                         <?php else: ?>
-                        <!-- Mode: dari index — tampilkan dropdown kelas belum dinilai -->
                         <div class="mb-4">
                             <label class="form-label fw-semibold">Kelas <span class="text-danger">*</span></label>
                             <?php if (empty($classes)): ?>
                                 <div class="alert alert-warning mb-0 p-3">
-                                    <i class="bx bx-info-circle me-2"></i>
-                                    Semua kelas sudah dinilai hari ini!
+                                    <i class="bx bx-info-circle me-2"></i>Semua kelas sudah dinilai hari ini!
                                 </div>
                             <?php else: ?>
                                 <select name="class_id" class="form-select" required>
@@ -61,9 +80,7 @@
                                     <option value="<?= $cls->id ?>"><?= htmlspecialchars($cls->class_name) ?></option>
                                     <?php endforeach; ?>
                                 </select>
-                                <div class="form-text text-muted">
-                                    Hanya menampilkan kelas yang <strong>belum dinilai hari ini</strong>.
-                                </div>
+                                <div class="form-text text-muted">Hanya menampilkan kelas yang <strong>belum dinilai hari ini</strong>.</div>
                             <?php endif; ?>
                         </div>
                         <?php endif; ?>
@@ -74,12 +91,18 @@
                                 value="<?= date('Y-m-d') ?>" required />
                         </div>
 
+                        <!-- Total poin — sticky summary -->
+                        <div class="p-3 rounded-3 border text-center mb-3" style="background:#f8f9ff;">
+                            <p class="text-muted small mb-1 fw-semibold">TOTAL POIN</p>
+                            <h2 class="fw-bold text-primary mb-0" id="totalPointDisplay">0</h2>
+                        </div>
+
                         <div class="alert alert-info mb-0 p-3">
                             <div class="d-flex align-items-start">
                                 <i class="bx bx-bulb me-2 mt-1 fs-5"></i>
                                 <div>
-                                    <strong>Panduan Penilaian:</strong><br>
-                                    <small>Pilih kondisi pada setiap aspek, poin akan <strong>terisi otomatis</strong> sesuai pengaturan aspek.</small>
+                                    <strong>Panduan:</strong><br>
+                                    <small>Pilih kondisi tiap aspek, poin terisi <strong>otomatis</strong>.</small>
                                 </div>
                             </div>
                         </div>
@@ -87,74 +110,68 @@
                 </div>
             </div>
 
-            <!-- Kolom Kanan -->
+            <!-- ===== Kolom Aspek ===== -->
             <div class="col-md-8 mb-4">
                 <div class="card shadow-sm">
                     <div class="card-header d-flex align-items-center justify-content-between py-3">
                         <h6 class="mb-0"><i class="bx bx-list-check me-2 text-primary"></i>Penilaian Per Aspek</h6>
                         <span id="totalPointBadge" class="badge bg-primary fs-6 px-3">Total: 0 poin</span>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-bordered mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th width="40" class="text-center">#</th>
-                                        <th>Aspek Penilaian</th>
-                                        <th width="200" class="text-center">Kondisi</th>
-                                        <th width="110" class="text-center">Poin</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php $no = 1; foreach ($aspects as $asp): ?>
-                                    <tr>
-                                        <td class="text-center text-muted"><?= $no++ ?></td>
-                                        <td>
-                                            <input type="hidden" name="aspect_id[]" value="<?= $asp->id ?>">
-                                            <strong><?= htmlspecialchars($asp->aspect_name) ?></strong><br>
-                                            <small class="text-muted">
-                                                🟢 <?= $asp->point_bersih ?> &nbsp;
-                                                🟡 <?= $asp->point_cukup ?> &nbsp;
-                                                🔴 <?= $asp->point_kotor ?>
-                                            </small>
-                                        </td>
-                                        <td class="text-center">
-                                            <select name="condition_status[]"
-                                                class="form-select form-select-sm condition-select"
-                                                data-bersih="<?= $asp->point_bersih ?>"
-                                                data-cukup="<?= $asp->point_cukup ?>"
-                                                data-kotor="<?= $asp->point_kotor ?>"
-                                                onchange="handleConditionChange(this)"
-                                                required>
-                                                <option value="bersih">🟢 Bersih</option>
-                                                <option value="cukup">🟡 Cukup</option>
-                                                <option value="kotor">🔴 Kotor</option>
-                                            </select>
-                                        </td>
-                                        <td class="text-center">
-                                            <input type="number"
-                                                name="point[]"
-                                                class="form-control form-control-sm text-center fw-bold point-input"
-                                                value="<?= $asp->point_bersih ?>"
-                                                min="0"
-                                                readonly />
-                                        </td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                                <tfoot class="table-light">
-                                    <tr>
-                                        <td colspan="3" class="text-end fw-bold">Total Poin:</td>
-                                        <td class="text-center fw-bold fs-5 text-primary" id="totalPointCell">0</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                    <div class="card-body">
+
+                        <?php $no = 1; foreach ($aspects as $asp): ?>
+                        <div class="aspect-row-card">
+                            <input type="hidden" name="aspect_id[]" value="<?= $asp->id ?>">
+                            <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
+                                <!-- Nama & info poin -->
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <span class="text-muted fw-semibold" style="font-size:0.8rem;min-width:22px;"><?= $no++ ?></span>
+                                        <strong style="font-size:0.9rem;"><?= htmlspecialchars($asp->aspect_name) ?></strong>
+                                    </div>
+                                    <div class="ms-4" style="font-size:0.75rem;color:#888;">
+                                        🟢 <?= $asp->point_bersih ?> &nbsp;🟡 <?= $asp->point_cukup ?> &nbsp;🔴 <?= $asp->point_kotor ?>
+                                    </div>
+                                </div>
+                                <!-- Kondisi & poin -->
+                                <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                    <select name="condition_status[]"
+                                        class="form-select form-select-sm"
+                                        style="width:130px;"
+                                        data-bersih="<?= $asp->point_bersih ?>"
+                                        data-cukup="<?= $asp->point_cukup ?>"
+                                        data-kotor="<?= $asp->point_kotor ?>"
+                                        onchange="handleConditionChange(this)"
+                                        required>
+                                        <option value="bersih">🟢 Bersih</option>
+                                        <option value="cukup">🟡 Cukup</option>
+                                        <option value="kotor">🔴 Kotor</option>
+                                    </select>
+                                    <div class="text-center" style="min-width:52px;">
+                                        <input type="number"
+                                            name="point[]"
+                                            class="form-control form-control-sm text-center fw-bold point-input"
+                                            value="<?= $asp->point_bersih ?>"
+                                            min="0"
+                                            readonly
+                                            style="width:52px;" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+
+                        <!-- Total footer -->
+                        <div class="d-flex justify-content-end align-items-center gap-3 pt-2 border-top mt-2">
+                            <span class="fw-bold text-muted">Total Poin:</span>
+                            <span class="fw-bold fs-4 text-primary" id="totalPointCell">0</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Aksi -->
         <div class="d-flex justify-content-end gap-2 mb-4">
             <?php if ($selected_class): ?>
                 <a href="<?= base_url('assessments/class_detail/' . $selected_class->id) ?>" class="btn btn-outline-secondary">
@@ -167,7 +184,6 @@
             <?php endif; ?>
 
             <?php if (empty($classes) && !$selected_class): ?>
-                <!-- Semua kelas sudah dinilai, disable tombol simpan -->
                 <button type="button" class="btn btn-secondary" disabled>
                     <i class="bx bx-ban me-1"></i>Semua Kelas Sudah Dinilai
                 </button>
@@ -186,28 +202,22 @@ function handleConditionChange(selectEl) {
     var bersih = parseInt(selectEl.getAttribute('data-bersih'));
     var cukup  = parseInt(selectEl.getAttribute('data-cukup'));
     var kotor  = parseInt(selectEl.getAttribute('data-kotor'));
-
-    var row   = selectEl.closest('tr');
-    var input = row.querySelector('.point-input');
-
+    var card   = selectEl.closest('.aspect-row-card');
+    var input  = card.querySelector('.point-input');
     if (val === 'bersih')     input.value = bersih;
     else if (val === 'cukup') input.value = cukup;
     else                      input.value = kotor;
-
     hitungTotal();
 }
 
 function hitungTotal() {
     var inputs = document.querySelectorAll('.point-input');
     var total  = 0;
-    inputs.forEach(function (inp) {
-        total += parseInt(inp.value) || 0;
-    });
-    document.getElementById('totalPointCell').textContent  = total;
-    document.getElementById('totalPointBadge').textContent = 'Total: ' + total + ' poin';
+    inputs.forEach(function (inp) { total += parseInt(inp.value) || 0; });
+    document.getElementById('totalPointCell').textContent    = total;
+    document.getElementById('totalPointBadge').textContent   = 'Total: ' + total + ' poin';
+    document.getElementById('totalPointDisplay').textContent = total;
 }
 
-window.addEventListener('load', function () {
-    hitungTotal();
-});
+window.addEventListener('load', function () { hitungTotal(); });
 </script>

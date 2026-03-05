@@ -2,308 +2,258 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Laporan Kebersihan <?= $nama_bulan . ' ' . $tahun ?></title>
 <style>
+    /* ===== Corporate Professional Reset ===== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-        font-family: Arial, sans-serif;
-        font-size: 11px;
-        color: #1a1a1a;
+        font-family: "Helvetica", Arial, sans-serif;
+        font-size: 10pt;
+        color: #2c3e50;
+        line-height: 1.5;
         background: #fff;
     }
 
-    /* ── Header ── */
-    .header {
-        background: linear-gradient(135deg, #0f2d1e 0%, #1a4731 100%);
-        color: #fff;
-        padding: 20px 25px;
-        margin-bottom: 20px;
-    }
-    .header-inner {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .header h1 { font-size: 18px; margin-bottom: 4px; }
-    .header p  { font-size: 11px; opacity: 0.85; margin: 0; }
-    .header .badge-period {
-        background: rgba(212,164,42,0.9);
-        color: #fff;
-        padding: 6px 16px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: bold;
-    }
+    /* ===== Layout Helpers ===== */
+    .clearfix::after { content: ""; display: table; clear: both; }
 
-    /* ── Summary Cards ── */
-    .summary-grid {
-        display: flex;
-        gap: 12px;
-        margin-bottom: 20px;
-        padding: 0 2px;
+    /* ===== Header Section ===== */
+    .header { 
+        padding-bottom: 20px; 
+        border-bottom: 2px solid #1a4731; 
+        margin-bottom: 30px; 
     }
+    .header-left { float: left; width: 60%; }
+    .header-right { float: right; width: 40%; text-align: right; }
+    
+    .institution-name { 
+        font-size: 14pt; 
+        font-weight: bold; 
+        color: #1a4731; 
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+    .document-title { 
+        font-size: 18pt; 
+        font-weight: 300; 
+        color: #333; 
+        margin-top: 5px;
+    }
+    .meta-info { font-size: 9pt; color: #7f8c8d; margin-top: 5px; }
+
+    /* ===== KPIs / Summary Cards ===== */
+    .summary-container { margin-bottom: 30px; }
     .summary-card {
-        flex: 1;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        padding: 12px;
-        text-align: center;
-        border-top: 3px solid #1a4731;
+        float: left;
+        width: 23%;
+        margin-right: 2%;
+        padding: 12px 0;
+        border-top: 1px solid #eee;
     }
-    .summary-card .val  { font-size: 22px; font-weight: bold; color: #1a4731; }
-    .summary-card .lbl  { font-size: 10px; color: #666; margin-top: 2px; }
+    .summary-card .label { 
+        font-size: 8pt; 
+        color: #95a5a6; 
+        text-transform: uppercase; 
+        margin-bottom: 5px; 
+        display: block;
+    }
+    .summary-card .value { 
+        font-size: 16pt; 
+        font-weight: bold; 
+        color: #2c3e50; 
+    }
+    .summary-card.highlight .value { color: #d4a42a; }
 
-    /* ── Section Title ── */
-    .section-title {
-        font-size: 13px;
-        font-weight: bold;
-        color: #0f2d1e;
-        border-left: 4px solid #b8912a;
+    /* ===== Content Sections ===== */
+    .section-header { 
+        margin-top: 10px;
+        margin-bottom: 15px;
         padding-left: 10px;
-        margin: 18px 0 10px;
+        border-left: 4px solid #1a4731;
+    }
+    .section-title { 
+        font-size: 11pt; 
+        font-weight: bold; 
+        color: #1a4731; 
+        text-transform: uppercase;
     }
 
-    /* ── Table ── */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 18px;
-    }
-    thead tr {
-        background: #1a4731;
-        color: #fff;
+    /* ===== Professional Table Styling ===== */
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-bottom: 25px;
+        table-layout: fixed;
     }
     thead th {
-        padding: 7px 8px;
-        text-align: center;
-        font-size: 10px;
+        text-align: left;
+        padding: 12px 10px;
+        font-size: 8.5pt;
         font-weight: bold;
+        color: #7f8c8d;
+        border-bottom: 2px solid #eee;
+        text-transform: uppercase;
     }
-    thead th.left { text-align: left; }
-    tbody tr:nth-child(even) { background: #f5f9f5; }
-    tbody tr:hover            { background: #e8f5ee; }
     tbody td {
-        padding: 6px 8px;
-        border-bottom: 1px solid #e8e8e8;
-        font-size: 10px;
+        padding: 12px 10px;
+        border-bottom: 1px solid #f9f9f9;
+        font-size: 9.5pt;
+        color: #34495e;
+        vertical-align: middle;
     }
-    .text-center { text-align: center; }
-    .text-right  { text-align: right; }
-
-    /* ── Badge / Predikat ── */
-    .badge {
-        display: inline-block;
-        padding: 2px 8px;
-        border-radius: 10px;
-        font-size: 9px;
+    
+    /* Alternating row color */
+    tbody tr:nth-child(even) { background-color: #fcfcfc; }
+    
+    /* Ranking specific */
+    .rank-circle {
+        background: #f0f0f0;
+        color: #333;
+        width: 25px;
+        height: 25px;
+        line-height: 25px;
+        text-align: center;
+        border-radius: 50%;
         font-weight: bold;
-        color: #fff;
+        font-size: 8pt;
     }
-    .badge-success   { background: #2d7a4f; }
-    .badge-primary   { background: #1a4731; }
-    .badge-warning   { background: #b8912a; }
-    .badge-danger    { background: #c0392b; }
-    .badge-secondary { background: #8592a3; }
+    .top-rank { background: #1a4731; color: #fff; }
 
-    /* ── Ranking ── */
-    .ranking-table td.rank  { font-size: 14px; text-align: center; width: 40px; }
-    .ranking-table td.score { font-weight: bold; font-size: 13px; color: #1a4731; text-align: center; }
+    /* ===== Badges (Modern Pill Style) ===== */
+    .badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 7.5pt;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    .bs { background: #e6f4ea; color: #1e7e34; } /* Sangat Bersih */
+    .bp { background: #e8f0fe; color: #1967d2; } /* Bersih */
+    .bw { background: #fff4e5; color: #a66100; } /* Cukup */
+    .bd { background: #fce8e6; color: #c5221f; } /* Kurang */
+    .bx { background: #f1f3f4; color: #5f6368; } /* N/A */
 
-    /* ── Footer ── */
+    /* ===== Footer ===== */
     .footer {
-        margin-top: 25px;
-        border-top: 1px solid #ccc;
-        padding-top: 10px;
-        display: flex;
-        justify-content: space-between;
-        font-size: 9px;
-        color: #999;
-    }
-
-    /* ── Print Only ── */
-    @media print {
-        body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-        .no-print { display: none !important; }
-        @page { size: A4 landscape; margin: 15mm; }
-    }
-
-    /* ── Screen Only (fallback tanpa mPDF) ── */
-    @media screen {
-        body { max-width: 1100px; margin: 20px auto; padding: 10px; }
-        .print-btn {
-            position: fixed; top: 20px; right: 20px;
-            background: #1a4731; color: #fff;
-            border: none; padding: 10px 20px; border-radius: 6px;
-            cursor: pointer; font-size: 13px; z-index: 999;
-        }
-        .print-btn:hover { background: #0f2d1e; }
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        font-size: 8pt;
+        color: #bdc3c7;
+        padding: 20px 0;
+        border-top: 1px solid #eee;
     }
 </style>
 </head>
 <body>
 
-<!-- Tombol Print (hanya muncul di browser, tidak di PDF mPDF) -->
-<button class="print-btn no-print" onclick="window.print()">🖨️ Print / Save PDF</button>
-
-<!-- ── HEADER ── -->
-<div class="header">
-    <div class="header-inner">
-        <div>
-            <h1>📋 Laporan Kebersihan Kelas</h1>
-            <p>SMP Islam Al-Hadi — Rekap Penilaian Bulanan</p>
-        </div>
-        <div class="badge-period"><?= $nama_bulan . ' ' . $tahun ?></div>
-    </div>
-</div>
-
 <?php
-$bn = [1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',5=>'Mei',6=>'Juni',
-       7=>'Juli',8=>'Agustus',9=>'September',10=>'Oktober',11=>'November',12=>'Desember'];
+if (!function_exists('predikat_class')) {
+    function predikat_class($avg, $jumlah) {
+        if ($jumlah == 0) return ['bx', 'No Data'];
+        if ($avg >= 80)   return ['bs', 'Sangat Bersih'];
+        if ($avg >= 60)   return ['bp', 'Bersih'];
+        if ($avg >= 40)   return ['bw', 'Cukup'];
+        return ['bd', 'Kurang'];
+    }
+}
 ?>
 
-<!-- ── SUMMARY CARDS ── -->
-<div class="summary-grid">
-    <div class="summary-card">
-        <div class="val"><?= $summary->total_kelas_dinilai ?? 0 ?></div>
-        <div class="lbl">Kelas Dinilai</div>
+<div class="header clearfix">
+    <div class="header-left">
+        <div class="institution-name">SMP Islam Al-Hadi</div>
+        <div class="document-title">Laporan Penilaian Kebersihan</div>
+        <div class="meta-info">Sistem Informasi Kebersihan & Manajemen Fasilitas</div>
     </div>
-    <div class="summary-card">
-        <div class="val"><?= $summary->total_penilaian ?? 0 ?></div>
-        <div class="lbl">Total Penilaian</div>
-    </div>
-    <div class="summary-card">
-        <div class="val"><?= $summary->rata_rata_keseluruhan ?? '-' ?></div>
-        <div class="lbl">Rata-rata Poin</div>
-    </div>
-    <div class="summary-card">
-        <div class="val"><?= $summary->poin_tertinggi ?? '-' ?></div>
-        <div class="lbl">Poin Tertinggi</div>
-    </div>
-    <div class="summary-card" style="border-top-color:#b8912a">
-        <div class="val" style="font-size:14px;color:#b8912a">
-            <?= $terbersih ? htmlspecialchars($terbersih->class_name) : '-' ?>
-        </div>
-        <div class="lbl">🏆 Kelas Terbersih</div>
+    <div class="header-right">
+        <div style="font-size: 12pt; font-weight: bold; color: #2c3e50;"><?= htmlspecialchars($nama_bulan . ' ' . $tahun) ?></div>
+        <div class="meta-info">Dicetak: <?= date('d M Y, H:i') ?></div>
     </div>
 </div>
 
-<!-- ── REKAP NILAI PER KELAS ── -->
-<div class="section-title">Rekap Nilai Kebersihan — <?= $nama_bulan . ' ' . $tahun ?></div>
+<div class="summary-container clearfix">
+    <div class="summary-card">
+        <span class="label">Unit Dinilai</span>
+        <div class="value"><?= isset($summary->total_kelas_dinilai) ? (int)$summary->total_kelas_dinilai : 0 ?> Kelas</div>
+    </div>
+    <div class="summary-card">
+        <span class="label">Total Inspeksi</span>
+        <div class="value"><?= isset($summary->total_penilaian) ? (int)$summary->total_penilaian : 0 ?> Log</div>
+    </div>
+    <div class="summary-card">
+        <span class="label">Rerata Skor</span>
+        <div class="value"><?= isset($summary->rata_rata_keseluruhan) ? htmlspecialchars($summary->rata_rata_keseluruhan) : '0' ?></div>
+    </div>
+    <div class="summary-card highlight">
+        <span class="label">Performa Terbaik</span>
+        <div class="value"><?= $terbersih ? htmlspecialchars($terbersih->class_name) : '-' ?></div>
+    </div>
+</div>
+
+<div class="section-header">
+    <div class="section-title">Rekapitulasi Kinerja Kelas</div>
+</div>
 <table>
     <thead>
         <tr>
-            <th style="width:35px">No</th>
-            <th class="left">Nama Kelas</th>
-            <th>Jml Penilaian</th>
-            <th>Rata-rata</th>
-            <th>Tertinggi</th>
-            <th>Terendah</th>
-            <th>Predikat</th>
+            <th style="width: 5%;">#</th>
+            <th style="width: 35%;">Identitas Kelas</th>
+            <th style="width: 15%; text-align: center;">Frekuensi</th>
+            <th style="width: 15%; text-align: center;">Rata-rata</th>
+            <th style="width: 15%; text-align: center;">Skor Max</th>
+            <th style="width: 15%; text-align: center;">Status</th>
         </tr>
     </thead>
     <tbody>
-        <?php if (!empty($rekap)): $no = 1; foreach ($rekap as $row):
-            $avg = (float)$row->rata_rata;
-            if ($row->jumlah_penilaian == 0)    { $p='secondary'; $l='Belum Ada Data'; }
-            elseif ($avg >= 80)                 { $p='success';   $l='Sangat Bersih'; }
-            elseif ($avg >= 60)                 { $p='primary';   $l='Bersih'; }
-            elseif ($avg >= 40)                 { $p='warning';   $l='Cukup'; }
-            else                                { $p='danger';    $l='Kurang'; }
-        ?>
+    <?php if (!empty($rekap)): $no = 1; foreach ($rekap as $row):
+        [$p, $l] = predikat_class((float)$row->rata_rata, $row->jumlah_penilaian);
+    ?>
         <tr>
-            <td class="text-center"><?= $no++ ?></td>
-            <td><strong><?= htmlspecialchars($row->class_name) ?></strong></td>
-            <td class="text-center"><?= $row->jumlah_penilaian ?> kali</td>
-            <td class="text-center"><strong><?= $row->rata_rata ?? '-' ?></strong></td>
-            <td class="text-center" style="color:#2d7a4f;font-weight:bold"><?= $row->tertinggi ?? '-' ?></td>
-            <td class="text-center" style="color:#c0392b;font-weight:bold"><?= $row->terendah ?? '-' ?></td>
-            <td class="text-center"><span class="badge badge-<?= $p ?>"><?= $l ?></span></td>
+            <td style="color: #bdc3c7;"><?= $no++ ?></td>
+            <td style="font-weight: bold; color: #1a4731;"><?= htmlspecialchars($row->class_name) ?></td>
+            <td style="text-align: center;"><?= (int)$row->jumlah_penilaian ?>x</td>
+            <td style="text-align: center; font-weight: bold;"><?= htmlspecialchars($row->rata_rata ?? '0') ?></td>
+            <td style="text-align: center; color: #7f8c8d;"><?= htmlspecialchars($row->tertinggi ?? '0') ?></td>
+            <td style="text-align: center;"><span class="badge <?= $p ?>"><?= $l ?></span></td>
         </tr>
-        <?php endforeach; else: ?>
-        <tr><td colspan="7" class="text-center" style="padding:20px;color:#999">Tidak ada data penilaian untuk bulan ini.</td></tr>
-        <?php endif; ?>
+    <?php endforeach; else: ?>
+        <tr><td colspan="6" style="text-align: center; padding: 30px;">Data tidak ditemukan untuk periode ini.</td></tr>
+    <?php endif; ?>
     </tbody>
 </table>
 
-<!-- ── RANKING ── -->
-<div class="section-title">Ranking Kebersihan Kelas — <?= $nama_bulan . ' ' . $tahun ?></div>
-<table class="ranking-table">
+<div class="section-header">
+    <div class="section-title">Peringkat 5 Besar</div>
+</div>
+<table style="background: #fff;">
     <thead>
         <tr>
-            <th style="width:50px">Rank</th>
-            <th class="left">Nama Kelas</th>
-            <th>Jml Penilaian</th>
-            <th>Rata-rata Poin</th>
-            <th>Predikat</th>
+            <th style="width: 10%; text-align: center;">Rank</th>
+            <th style="width: 60%;">Nama Kelas</th>
+            <th style="width: 15%; text-align: center;">Skor Akhir</th>
+            <th style="width: 15%; text-align: center;">Apresiasi</th>
         </tr>
     </thead>
     <tbody>
-        <?php if (!empty($ranking)): $rank = 1; foreach ($ranking as $row):
-            $avg = (float)$row->rata_rata;
-            if ($row->jumlah_penilaian == 0) { $p='secondary'; $l='Belum Ada Data'; $score='-'; }
-            elseif ($avg >= 80) { $p='success'; $l='Sangat Bersih'; $score=number_format($avg,1); }
-            elseif ($avg >= 60) { $p='primary'; $l='Bersih'; $score=number_format($avg,1); }
-            elseif ($avg >= 40) { $p='warning'; $l='Cukup'; $score=number_format($avg,1); }
-            else { $p='danger'; $l='Kurang'; $score=number_format($avg,1); }
-
-            if ($rank==1) $medal='🥇';
-            elseif ($rank==2) $medal='🥈';
-            elseif ($rank==3) $medal='🥉';
-            else $medal = '#'.$rank;
-        ?>
+    <?php if (!empty($ranking)): $rank = 1; foreach (array_slice($ranking, 0, 5) as $row):
+        $avg = (float)$row->rata_rata;
+        [$p, $l] = predikat_class($avg, $row->jumlah_penilaian);
+    ?>
         <tr>
-            <td class="rank"><?= $medal ?></td>
-            <td><strong><?= htmlspecialchars($row->class_name) ?></strong></td>
-            <td class="text-center"><?= $row->jumlah_penilaian ?> kali</td>
-            <td class="score"><?= $score ?></td>
-            <td class="text-center"><span class="badge badge-<?= $p ?>"><?= $l ?></span></td>
+            <td style="text-align: center;">
+                <div class="rank-circle <?= $rank == 1 ? 'top-rank' : '' ?>"><?= $rank ?></div>
+            </td>
+            <td style="font-size: 11pt;"><?= htmlspecialchars($row->class_name) ?></td>
+            <td style="text-align: center; font-weight: bold; font-size: 11pt; color: #1a4731;"><?= number_format($avg, 1) ?></td>
+            <td style="text-align: center;"><span class="badge <?= $p ?>"><?= $l ?></span></td>
         </tr>
-        <?php $rank++; endforeach; else: ?>
-        <tr><td colspan="5" class="text-center" style="padding:20px;color:#999">Tidak ada data ranking.</td></tr>
-        <?php endif; ?>
+    <?php $rank++; endforeach; endif; ?>
     </tbody>
 </table>
 
-<!-- ── DETAIL PENILAIAN HARIAN ── -->
-<?php if (!empty($detail)): ?>
-<div class="section-title">Detail Penilaian Harian — <?= $nama_bulan . ' ' . $tahun ?></div>
-<table>
-    <thead>
-        <tr>
-            <th style="width:35px">No</th>
-            <th class="left">Kelas</th>
-            <th>Tanggal</th>
-            <th>Hari</th>
-            <th>Total Poin</th>
-            <th>Predikat</th>
-            <th class="left">Dinilai Oleh</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php $no = 1; foreach ($detail as $row):
-            if ($row->total_point >= 80)     { $p='success'; $l='Sangat Bersih'; }
-            elseif ($row->total_point >= 60) { $p='primary'; $l='Bersih'; }
-            elseif ($row->total_point >= 40) { $p='warning'; $l='Cukup'; }
-            else                             { $p='danger';  $l='Kurang'; }
-        ?>
-        <tr>
-            <td class="text-center"><?= $no++ ?></td>
-            <td><?= htmlspecialchars($row->class_name) ?></td>
-            <td class="text-center"><?= date('d M Y', strtotime($row->assessment_date)) ?></td>
-            <td class="text-center"><?= date('l', strtotime($row->assessment_date)) ?></td>
-            <td class="text-center"><strong><?= $row->total_point ?></strong></td>
-            <td class="text-center"><span class="badge badge-<?= $p ?>"><?= $l ?></span></td>
-            <td><?= htmlspecialchars($row->admin_name) ?></td>
-        </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
-<?php endif; ?>
-
-<!-- ── FOOTER ── -->
 <div class="footer">
-    <span>SMP Islam Al-Hadi — Sistem Penilaian Kebersihan Kelas</span>
-    <span>Dicetak: <?= date('d M Y H:i') ?></span>
+    <div style="float: left;">Dokumen ini dihasilkan secara otomatis oleh Sistem Manajemen Kebersihan Al-Hadi.</div>
+    <div style="float: right;">Hal. {PAGENO}</div>
 </div>
 
 </body>

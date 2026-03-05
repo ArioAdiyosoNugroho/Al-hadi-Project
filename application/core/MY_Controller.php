@@ -23,7 +23,7 @@ class MY_Controller extends CI_Controller {
      */
     private function _check_auth() {
         if (!$this->session->userdata('logged_in')) {
-            $this->session->set_flashdata('error', 'Silakan login terlebih dahulu!');
+            // $this->session->set_flashdata('error', 'Silakan login terlebih dahulu!');
             redirect('auth');
         }
     }
