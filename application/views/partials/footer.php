@@ -5,6 +5,7 @@
     <script src="<?= base_url('assets/') ?>assets/vendor/js/bootstrap.js"></script>
     <script src="<?= base_url('assets/') ?>assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 	<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+	<script src="<?= base_url('assets/') ?>assets/vendor/js/data-table.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="<?= base_url('assets/') ?>assets/vendor/js/menu.js"></script>
@@ -33,10 +34,6 @@
 		        info:         true,
 		        lengthChange: true,
 		        pageLength:   10,
-		        // Kolom Aksi tidak perlu di-sort
-		        columnDefs: [
-		            { orderable: false, targets: [0, 3] }
-		        ],
 		        language: {
 		            search:      "Cari:",
 		            lengthMenu:  "Tampilkan _MENU_ data",
