@@ -189,6 +189,139 @@
       </div>
     </div>
   </div>
+
+  <!-- ── Row 2 ── -->
+  <div class="row">
+
+    <!-- Distribusi Kondisi Donut -->
+    <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
+      <div class="card h-100">
+        <div class="card-header d-flex align-items-center justify-content-between pb-0">
+          <div class="card-title mb-0">
+            <h5 class="m-0 me-2">Distribusi Kondisi</h5>
+            <small class="text-muted">Bulan <?= $bulan_ini ?></small>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex flex-column align-items-center gap-1">
+              <?php $condArr = json_decode($chart_condition, true); ?>
+              <h2 class="mb-2"><?= array_sum($condArr) ?></h2>
+              <span class="small text-muted">Total Detail</span>
+            </div>
+            <div id="orderStatisticsChart"></div>
+          </div>
+          <ul class="p-0 m-0">
+            <li class="d-flex mb-4 pb-1">
+              <div class="avatar flex-shrink-0 me-3">
+                <span class="avatar-initial rounded bg-label-success"><i class="bx bx-check"></i></span>
+              </div>
+              <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                <div class="me-2">
+                  <h6 class="mb-0">Bersih</h6>
+                  <small class="text-muted">Kondisi terbaik</small>
+                </div>
+                <span class="badge bg-label-success"><?= $condArr['bersih'] ?? 0 ?></span>
+              </div>
+            </li>
+            <li class="d-flex mb-4 pb-1">
+              <div class="avatar flex-shrink-0 me-3">
+                <span class="avatar-initial rounded bg-label-warning"><i class="bx bx-minus"></i></span>
+              </div>
+              <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                <div class="me-2">
+                  <h6 class="mb-0">Cukup</h6>
+                  <small class="text-muted">Perlu perhatian</small>
+                </div>
+                <span class="badge bg-label-warning"><?= $condArr['cukup'] ?? 0 ?></span>
+              </div>
+            </li>
+            <li class="d-flex">
+              <div class="avatar flex-shrink-0 me-3">
+                <span class="avatar-initial rounded bg-label-danger"><i class="bx bx-x"></i></span>
+              </div>
+              <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                <div class="me-2">
+                  <h6 class="mb-0">Kotor</h6>
+                  <small class="text-muted">Perlu tindakan</small>
+                </div>
+                <span class="badge bg-label-danger"><?= $condArr['kotor'] ?? 0 ?></span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rata-rata per Kelas Horizontal Bar -->
+    <div class="col-md-6 col-lg-4 order-1 mb-4">
+      <div class="card h-100">
+        <div class="card-header">
+          <h5 class="card-title">Rata-rata Poin per Kelas</h5>
+          <small class="text-muted">Bulan <?= $bulan_ini ?></small>
+        </div>
+        <div class="card-body">
+          <div id="incomeChart"></div>
+          <div class="d-flex justify-content-center pt-3 gap-3">
+            <div id="expensesOfWeek"></div>
+            <div>
+              <p class="mb-0 mt-1 fw-semibold">Penilaian Hari Ini</p>
+              <small class="text-muted"><?= $assessments_today ?> kali</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Penilaian Terbaru -->
+    <div class="col-md-6 col-lg-4 order-2 mb-4">
+      <div class="card h-100">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <h5 class="card-title m-0 me-2">Penilaian Terbaru</h5>
+          <a href="<?= base_url('assessments') ?>" class="btn btn-sm btn-outline-primary">Lihat Semua</a>
+        </div>
+        <div class="card-body" style="max-height: 360px; overflow-y: auto;">
+          <ul class="p-0 m-0">
+            <?php if (!empty($recent_assessments)): ?>
+              <?php foreach ($recent_assessments as $item):
+                $total = $item->total_point;
+                if ($total >= 80)     { $cls = 'success'; $icon = 'bx-trophy'; }
+                elseif ($total >= 60) { $cls = 'primary'; $icon = 'bx-like'; }
+                elseif ($total >= 40) { $cls = 'warning'; $icon = 'bx-minus-circle'; }
+                else                  { $cls = 'danger';  $icon = 'bx-dislike'; }
+              ?>
+              <li class="d-flex mb-4 pb-1">
+                <div class="avatar flex-shrink-0 me-3">
+                  <span class="avatar-initial rounded bg-label-<?= $cls ?>">
+                    <i class="bx <?= $icon ?>"></i>
+                  </span>
+                </div>
+                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                  <div class="me-2">
+                    <h6 class="mb-0"><?= htmlspecialchars($item->class_name) ?></h6>
+                    <small class="text-muted"><?= $item->assessor ?? 'Admin' ?></small>
+                  </div>
+                  <div class="text-end">
+                    <span class="badge bg-label-<?= $cls ?> mb-1"><?= $total ?> poin</span>
+                    <small class="text-muted d-block">
+                      <?= date('d M', strtotime($item->assessment_date)) ?>
+                    </small>
+                  </div>
+                </div>
+              </li>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <li class="text-center py-4 text-muted">
+                <i class="bx bx-inbox d-block mb-2" style="font-size:2rem;opacity:0.3;"></i>
+                Belum ada penilaian
+              </li>
+            <?php endif; ?>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <!-- ── Inject data PHP ke JavaScript ── -->

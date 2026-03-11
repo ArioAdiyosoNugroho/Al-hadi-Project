@@ -14,16 +14,29 @@
 
   // Total Revenue Report Chart - Bar Chart
   // --------------------------------------------------------------------
+	// ── Ambil data dari PHP injection ───────────────────────────
+  const _monthly     = (typeof window._dash !== 'undefined' && Array.isArray(window._dash.monthly)) ? window._dash.monthly : [];
+  const _avgPercent  = (typeof window._dash !== 'undefined') ? (parseInt(window._dash.avgPercent, 10) || 0) : 78;
+
+  // 7 bulan — label pendek seperti template: 'Jan', 'Feb', dst
+  const _monthLabels = _monthly.length ? _monthly.map(d => d.label) : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
+  const _monthAvg    = _monthly.length ? _monthly.map(d => parseFloat(d.avg_point) || 0)  : [18, 7, 15, 29, 18, 12, 9];
+  const _monthTot    = _monthly.length ? _monthly.map(d => -(parseInt(d.total, 10) || 0)) : [-13, -18, -9, -14, -5, -17, -15];
+
+  // ════════════════════════════════════════════════════════════════
+  // 1. TREN 7 BULAN — Bar Chart (#totalRevenueChart)
+  //    Styling 100% template, hanya series & categories dari DB
+  // ════════════════════════════════════════════════════════════════
   const totalRevenueChartEl = document.querySelector('#totalRevenueChart'),
     totalRevenueChartOptions = {
       series: [
         {
-          name: '2021',
-          data: [18, 7, 15, 29, 18, 12, 9]
+          name: 'Rata-rata Poin',    // ← ganti nama dari '2021'
+          data: _monthAvg            // ← data real dari DB
         },
         {
-          name: '2020',
-          data: [-13, -18, -9, -14, -5, -17, -15]
+          name: 'Jumlah Penilaian',  // ← ganti nama dari '2020'
+          data: _monthTot            // ← data real dari DB (negatif = visual ke bawah)
         }
       ],
       chart: {
@@ -78,7 +91,7 @@
         }
       },
       xaxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+        categories: _monthLabels,   // ← 7 label bulan dari DB, format 'Jan' 'Feb' dst
         labels: {
           style: {
             fontSize: '13px',
@@ -97,176 +110,37 @@
           style: {
             fontSize: '13px',
             colors: axisColor
-          }
+          },
+          formatter: val => Math.abs(val)  // tampilkan angka positif di sumbu Y
         }
       },
+      tooltip: {
+        shared: true,
+        intersect: false,
+        y: [
+          { formatter: val => (parseFloat(val) || 0).toFixed(1) + ' poin' },
+          { formatter: val => Math.abs(parseInt(val, 10) || 0) + ' kali' }
+        ]
+      },
       responsive: [
-        {
-          breakpoint: 1700,
-          options: {
-            plotOptions: {
-              bar: {
-                borderRadius: 10,
-                columnWidth: '32%'
-              }
-            }
-          }
-        },
-        {
-          breakpoint: 1580,
-          options: {
-            plotOptions: {
-              bar: {
-                borderRadius: 10,
-                columnWidth: '35%'
-              }
-            }
-          }
-        },
-        {
-          breakpoint: 1440,
-          options: {
-            plotOptions: {
-              bar: {
-                borderRadius: 10,
-                columnWidth: '42%'
-              }
-            }
-          }
-        },
-        {
-          breakpoint: 1300,
-          options: {
-            plotOptions: {
-              bar: {
-                borderRadius: 10,
-                columnWidth: '48%'
-              }
-            }
-          }
-        },
-        {
-          breakpoint: 1200,
-          options: {
-            plotOptions: {
-              bar: {
-                borderRadius: 10,
-                columnWidth: '40%'
-              }
-            }
-          }
-        },
-        {
-          breakpoint: 1040,
-          options: {
-            plotOptions: {
-              bar: {
-                borderRadius: 11,
-                columnWidth: '48%'
-              }
-            }
-          }
-        },
-        {
-          breakpoint: 991,
-          options: {
-            plotOptions: {
-              bar: {
-                borderRadius: 10,
-                columnWidth: '30%'
-              }
-            }
-          }
-        },
-        {
-          breakpoint: 840,
-          options: {
-            plotOptions: {
-              bar: {
-                borderRadius: 10,
-                columnWidth: '35%'
-              }
-            }
-          }
-        },
-        {
-          breakpoint: 768,
-          options: {
-            plotOptions: {
-              bar: {
-                borderRadius: 10,
-                columnWidth: '28%'
-              }
-            }
-          }
-        },
-        {
-          breakpoint: 640,
-          options: {
-            plotOptions: {
-              bar: {
-                borderRadius: 10,
-                columnWidth: '32%'
-              }
-            }
-          }
-        },
-        {
-          breakpoint: 576,
-          options: {
-            plotOptions: {
-              bar: {
-                borderRadius: 10,
-                columnWidth: '37%'
-              }
-            }
-          }
-        },
-        {
-          breakpoint: 480,
-          options: {
-            plotOptions: {
-              bar: {
-                borderRadius: 10,
-                columnWidth: '45%'
-              }
-            }
-          }
-        },
-        {
-          breakpoint: 420,
-          options: {
-            plotOptions: {
-              bar: {
-                borderRadius: 10,
-                columnWidth: '52%'
-              }
-            }
-          }
-        },
-        {
-          breakpoint: 380,
-          options: {
-            plotOptions: {
-              bar: {
-                borderRadius: 10,
-                columnWidth: '60%'
-              }
-            }
-          }
-        }
+        { breakpoint: 1700, options: { plotOptions: { bar: { borderRadius: 10, columnWidth: '32%' } } } },
+        { breakpoint: 1580, options: { plotOptions: { bar: { borderRadius: 10, columnWidth: '35%' } } } },
+        { breakpoint: 1440, options: { plotOptions: { bar: { borderRadius: 10, columnWidth: '42%' } } } },
+        { breakpoint: 1300, options: { plotOptions: { bar: { borderRadius: 10, columnWidth: '48%' } } } },
+        { breakpoint: 1200, options: { plotOptions: { bar: { borderRadius: 10, columnWidth: '40%' } } } },
+        { breakpoint: 1040, options: { plotOptions: { bar: { borderRadius: 11, columnWidth: '48%' } } } },
+        { breakpoint: 991,  options: { plotOptions: { bar: { borderRadius: 10, columnWidth: '30%' } } } },
+        { breakpoint: 840,  options: { plotOptions: { bar: { borderRadius: 10, columnWidth: '35%' } } } },
+        { breakpoint: 768,  options: { plotOptions: { bar: { borderRadius: 10, columnWidth: '28%' } } } },
+        { breakpoint: 640,  options: { plotOptions: { bar: { borderRadius: 10, columnWidth: '32%' } } } },
+        { breakpoint: 576,  options: { plotOptions: { bar: { borderRadius: 10, columnWidth: '37%' } } } },
+        { breakpoint: 480,  options: { plotOptions: { bar: { borderRadius: 10, columnWidth: '45%' } } } },
+        { breakpoint: 420,  options: { plotOptions: { bar: { borderRadius: 10, columnWidth: '52%' } } } },
+        { breakpoint: 380,  options: { plotOptions: { bar: { borderRadius: 10, columnWidth: '60%' } } } }
       ],
       states: {
-        hover: {
-          filter: {
-            type: 'none'
-          }
-        },
-        active: {
-          filter: {
-            type: 'none'
-          }
-        }
+        hover:  { filter: { type: 'none' } },
+        active: { filter: { type: 'none' } }
       }
     };
   if (typeof totalRevenueChartEl !== undefined && totalRevenueChartEl !== null) {
@@ -274,12 +148,14 @@
     totalRevenueChart.render();
   }
 
-  // Growth Chart - Radial Bar Chart
-  // --------------------------------------------------------------------
+  // ════════════════════════════════════════════════════════════════
+  // 2. RADIAL RATA-RATA SKOR — (#growthChart)
+  //    Styling 100% template, hanya series dari DB (avgPercent)
+  // ════════════════════════════════════════════════════════════════
   const growthChartEl = document.querySelector('#growthChart'),
     growthChartOptions = {
-      series: [78],
-      labels: ['Growth'],
+      series: [_avgPercent],     // ← data real: % rata-rata skor dari DB
+      labels: ['Rata-rata'],     // ← ganti label dari 'Growth'
       chart: {
         height: 240,
         type: 'radialBar'
@@ -310,7 +186,8 @@
               color: headingColor,
               fontSize: '22px',
               fontWeight: '500',
-              fontFamily: 'Public Sans'
+              fontFamily: 'Public Sans',
+              formatter: val => val + '%'  // ← tambah % di nilai
             }
           }
         }
@@ -338,16 +215,8 @@
         }
       },
       states: {
-        hover: {
-          filter: {
-            type: 'none'
-          }
-        },
-        active: {
-          filter: {
-            type: 'none'
-          }
-        }
+        hover:  { filter: { type: 'none' } },
+        active: { filter: { type: 'none' } }
       }
     };
   if (typeof growthChartEl !== undefined && growthChartEl !== null) {
@@ -357,15 +226,20 @@
 
   // Profit Report Line Chart
   // --------------------------------------------------------------------
+	// Profit Report Line Chart (Tren Mingguan 7 Hari)
+  // --------------------------------------------------------------------
+// Profit Report Line Chart (Tren Mingguan 7 Hari)
+  // --------------------------------------------------------------------
+  const _weekly      = (typeof window._dash !== 'undefined' && Array.isArray(window._dash.weekly)) ? window._dash.weekly : [];
+  const _weeklyData  = _weekly.length ? _weekly.map(d => parseFloat(d.avg_point) || 0) : [65, 70, 55, 72, 68, 75, 66];
+  const _weeklyLabels = _weekly.length ? _weekly.map(d => d.label) : ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+
   const profileReportChartEl = document.querySelector('#profileReportChart'),
     profileReportChartConfig = {
       chart: {
         height: 80,
-        // width: 175,
         type: 'line',
-        toolbar: {
-          show: false
-        },
+        toolbar: { show: false },
         dropShadow: {
           enabled: true,
           top: 10,
@@ -374,50 +248,40 @@
           color: config.colors.warning,
           opacity: 0.15
         },
-        sparkline: {
-          enabled: true
-        }
+        sparkline: { enabled: true }
       },
       grid: {
         show: false,
-        padding: {
-          right: 8
-        }
+        padding: { right: 8 }
       },
       colors: [config.colors.warning],
-      dataLabels: {
-        enabled: false
-      },
+      dataLabels: { enabled: false },
       stroke: {
         width: 5,
         curve: 'smooth'
       },
       series: [
         {
-          data: [110, 270, 145, 245, 205, 285]
+          name: 'Rata-rata Poin',
+          data: _weeklyData
         }
       ],
       xaxis: {
-        show: false,
-        lines: {
-          show: false
-        },
-        labels: {
-          show: false
-        },
-        axisBorder: {
-          show: false
-        }
+        categories: _weeklyLabels,  // ← '01 Mar', '02 Mar', dst dari DB
+        labels: { show: false },
+        axisBorder: { show: false },
+        axisTicks: { show: false }
       },
-      yaxis: {
-        show: false
+      yaxis: { show: false },
+      tooltip: {
+        x: { show: true },   // ← tampilkan label hari di tooltip
+        y: { formatter: val => (parseFloat(val) || 0).toFixed(1) + ' poin' }
       }
     };
   if (typeof profileReportChartEl !== undefined && profileReportChartEl !== null) {
     const profileReportChart = new ApexCharts(profileReportChartEl, profileReportChartConfig);
     profileReportChart.render();
   }
-
   // Order Statistics Chart
   // --------------------------------------------------------------------
   const chartOrderStatistics = document.querySelector('#orderStatisticsChart'),

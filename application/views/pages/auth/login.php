@@ -57,6 +57,9 @@
         font-weight: 600;
         letter-spacing: .5px;
       }
+			#togglePassword i {
+  			pointer-events: none;
+			}
     </style>
   </head>
 
@@ -157,13 +160,22 @@
 
     <script>
       // Toggle show/hide password
-      document.getElementById('togglePassword').addEventListener('click', function () {
-        const input   = document.getElementById('password');
-        const icon    = document.getElementById('eyeIcon');
-        const isPass  = input.type === 'password';
-        input.type    = isPass ? 'text' : 'password';
-        icon.className = isPass ? 'bx bx-show' : 'bx bx-hide';
-      });
+// Toggle show/hide password
+document.getElementById('togglePassword').addEventListener('click', function (e) {
+  // Mencegah aksi default agar tidak terjadi double-trigger
+  e.preventDefault();
+
+  const input = document.getElementById('password');
+  const icon = document.getElementById('eyeIcon');
+  
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.classList.replace('bx-hide', 'bx-show');
+  } else {
+    input.type = 'password';
+    icon.classList.replace('bx-show', 'bx-hide');
+  }
+});
 
       // SweetAlert - Notifikasi Error Login
       <?php if ($this->session->flashdata('error')): ?>

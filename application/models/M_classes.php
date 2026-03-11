@@ -8,7 +8,7 @@ class M_classes extends CI_Model {
     }
 
     public function get_all() {
-        return $this->db->order_by('id','DESC')->get('classes')->result();
+        return $this->db->order_by('class_name','ASC')->get('classes')->result();
     }
 
     public function get_by_id($id) {

@@ -13,17 +13,22 @@
 }
 </style>
 
-<!-- Content -->
 <div class="container-xxl flex-grow-1 container-p-y">
 
     <!-- Header -->
-    <div class="mb-4">
-        <h4 class="fw-bold mb-1">
-            <span class="text-muted fw-light">
-                Al-Hadi / <a href="<?= base_url('assessments') ?>" class="text-muted">Penilaian</a> /
-            </span> Edit Penilaian
-        </h4>
-        <p class="text-muted mb-0">Perbarui data penilaian kebersihan kelas</p>
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">
+                <span class="text-muted fw-light">
+                    Al-Hadi / <a href="<?= base_url('assessments') ?>" class="text-muted">Penilaian</a> /
+                </span>
+                Edit Penilaian
+            </h4>
+            <p class="text-muted mb-0">Perbarui data penilaian kebersihan kelas</p>
+        </div>
+        <a href="<?= base_url('assessments/class_detail/' . $assessment->class_id) ?>" class="btn btn-outline-secondary">
+            <i class="bx bx-arrow-back me-1"></i>Kembali
+        </a>
     </div>
 
     <?php
@@ -34,12 +39,31 @@
     <form action="<?= base_url('assessments/update/' . $assessment->id) ?>" method="POST">
         <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
 
-        <div class="row">
-            <!-- ===== Kolom Info ===== -->
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header py-3">
-                        <h6 class="mb-0"><i class="bx bx-info-circle me-2 text-warning"></i>Informasi Penilaian</h6>
+        <div class="row g-4">
+
+            <!-- ── Kolom Kiri: Info ── -->
+            <div class="col-md-4">
+
+                <!-- Stat card: Total Poin — Sneat style -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="card-title d-flex align-items-start justify-content-between mb-3">
+                            <div class="avatar flex-shrink-0">
+                                <span class="avatar-initial rounded bg-label-warning"><i class="bx bx-bar-chart-alt-2"></i></span>
+                            </div>
+                            <span id="totalPointBadge" class="badge bg-label-warning px-2 py-1" style="font-size:0.8rem;">0 poin</span>
+                        </div>
+                        <span class="fw-semibold d-block mb-1 text-muted" style="font-size:0.8rem;">TOTAL POIN</span>
+                        <h3 class="card-title mb-0 text-warning" id="totalPointDisplay">0</h3>
+                        <small class="text-muted">dihitung otomatis</small>
+                    </div>
+                </div>
+
+                <!-- Info penilaian -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="m-0 me-2">Informasi Penilaian</h5>
+                        <small class="text-muted">Kelas &amp; tanggal</small>
                     </div>
                     <div class="card-body">
                         <div class="mb-4">
@@ -53,37 +77,42 @@
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div class="mb-4">
+                        <div class="mb-3">
                             <label class="form-label fw-semibold">Tanggal Penilaian <span class="text-danger">*</span></label>
                             <input type="date" name="assessment_date" class="form-control"
                                 value="<?= $assessment->assessment_date ?>" required />
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Total poin summary -->
-                        <div class="p-3 rounded-3 border text-center mb-3" style="background:#fffbf0;">
-                            <p class="text-muted small mb-1 fw-semibold">TOTAL POIN</p>
-                            <h2 class="fw-bold text-warning mb-0" id="totalPointDisplay">0</h2>
-                        </div>
-
-                        <div class="alert alert-warning mb-0 p-3">
-                            <div class="d-flex align-items-start">
-                                <i class="bx bx-edit-alt me-2 mt-1 text-warning fs-5"></i>
-                                <div>
-                                    <strong>Mode Edit</strong><br>
-                                    <small>Perubahan akan menggantikan data penilaian sebelumnya.</small>
-                                </div>
+                <!-- Alert mode edit -->
+                <div class="card" style="border-left: 3px solid #ff9f43;">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="avatar flex-shrink-0">
+                                <span class="avatar-initial rounded bg-label-warning"><i class="bx bx-edit-alt"></i></span>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Mode Edit</h6>
+                                <small class="text-muted">Perubahan akan menggantikan data penilaian sebelumnya.</small>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
-            <!-- ===== Kolom Aspek ===== -->
-            <div class="col-md-8 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-header d-flex align-items-center justify-content-between py-3">
-                        <h6 class="mb-0"><i class="bx bx-list-check me-2 text-warning"></i>Penilaian Per Aspek</h6>
-                        <span id="totalPointBadge" class="badge bg-warning text-dark fs-6 px-3">Total: 0 poin</span>
+            <!-- ── Kolom Kanan: Aspek ── -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+                        <div>
+                            <h5 class="m-0 me-2">Penilaian Per Aspek</h5>
+                            <small class="text-muted"><?= count($aspects) ?> aspek</small>
+                        </div>
+                        <span id="totalPointBadge2" class="badge bg-label-warning px-3 py-2" style="font-size:0.8125rem;">
+                            Total: 0 poin
+                        </span>
                     </div>
                     <div class="card-body">
 
@@ -96,18 +125,25 @@
                         ?>
                         <div class="aspect-row-card">
                             <input type="hidden" name="aspect_id[]" value="<?= $asp->id ?>">
-                            <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
-                                <!-- Nama & info poin -->
-                                <div class="flex-grow-1">
+                            <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                                <!-- Nama & poin hint -->
+                                <div class="flex-grow-1 overflow-hidden">
                                     <div class="d-flex align-items-center gap-2 mb-1">
-                                        <span class="text-muted fw-semibold" style="font-size:0.8rem;min-width:22px;"><?= $no++ ?></span>
-                                        <strong style="font-size:0.9rem;"><?= htmlspecialchars($asp->aspect_name) ?></strong>
+                                        <span class="text-muted fw-semibold flex-shrink-0" style="font-size:0.8rem;min-width:22px;"><?= $no++ ?></span>
+                                        <div class="avatar avatar-xs flex-shrink-0">
+                                            <span class="avatar-initial rounded bg-label-warning">
+                                                <i class="bx bx-check-shield" style="font-size:11px;"></i>
+                                            </span>
+                                        </div>
+                                        <strong class="text-truncate" style="font-size:0.875rem;"><?= htmlspecialchars($asp->aspect_name) ?></strong>
                                     </div>
-                                    <div class="ms-4" style="font-size:0.75rem;color:#888;">
-                                        🟢 <?= $asp->point_bersih ?> &nbsp;🟡 <?= $asp->point_cukup ?> &nbsp;🔴 <?= $asp->point_kotor ?>
+                                    <div class="ms-4 ps-1 d-flex gap-2" style="font-size:0.72rem;">
+                                        <span class="text-success fw-semibold">🟢 <?= $asp->point_bersih ?></span>
+                                        <span class="text-warning fw-semibold">🟡 <?= $asp->point_cukup ?></span>
+                                        <span class="text-danger fw-semibold">🔴 <?= $asp->point_kotor ?></span>
                                     </div>
                                 </div>
-                                <!-- Kondisi & poin -->
+                                <!-- Kondisi + poin -->
                                 <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                     <select name="condition_status[]"
                                         class="form-select form-select-sm"
@@ -121,38 +157,38 @@
                                         <option value="cukup"  <?= $sel_cond == 'cukup'  ? 'selected' : '' ?>>🟡 Cukup</option>
                                         <option value="kotor"  <?= $sel_cond == 'kotor'  ? 'selected' : '' ?>>🔴 Kotor</option>
                                     </select>
-                                    <div class="text-center" style="min-width:52px;">
-                                        <input type="number"
-                                            name="point[]"
-                                            class="form-control form-control-sm text-center fw-bold point-input"
-                                            value="<?= $sel_point ?>"
-                                            min="0"
-                                            readonly
-                                            style="width:52px;" />
-                                    </div>
+                                    <input type="number"
+                                        name="point[]"
+                                        class="form-control form-control-sm text-center fw-bold point-input"
+                                        value="<?= $sel_point ?>"
+                                        min="0"
+                                        readonly
+                                        style="width:54px;" />
                                 </div>
                             </div>
                         </div>
                         <?php endforeach; ?>
 
-                        <!-- Total footer -->
-                        <div class="d-flex justify-content-end align-items-center gap-3 pt-2 border-top mt-2">
-                            <span class="fw-bold text-muted">Total Poin:</span>
-                            <span class="fw-bold fs-4 text-warning" id="totalPointCell">0</span>
+                        <!-- Total row -->
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-1"
+                             style="background:#fffcf0;border-radius:0 0 8px 8px;padding:10px 14px;margin:-12px -12px -12px -12px;">
+                            <span class="fw-semibold text-muted">Total Poin</span>
+                            <strong class="text-warning" style="font-size:1.4rem;" id="totalPointCell">0</strong>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Aksi -->
-        <div class="d-flex justify-content-end gap-2 mb-4">
-            <a href="<?= base_url('assessments') ?>" class="btn btn-outline-secondary">
-                <i class="bx bx-arrow-back me-1"></i>Batal
-            </a>
-            <button type="submit" class="btn btn-warning">
-                <i class="bx bx-save me-1"></i>Perbarui Penilaian
-            </button>
+                <!-- Tombol Aksi -->
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    <a href="<?= base_url('assessments/class_detail/' . $assessment->class_id) ?>" class="btn btn-outline-secondary">
+                        <i class="bx bx-x me-1"></i>Batal
+                    </a>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bx bx-save me-1"></i>Perbarui Penilaian
+                    </button>
+                </div>
+            </div>
+
         </div>
     </form>
 </div>
@@ -175,9 +211,10 @@ function hitungTotal() {
     var inputs = document.querySelectorAll('.point-input');
     var total  = 0;
     inputs.forEach(function (inp) { total += parseInt(inp.value) || 0; });
-    document.getElementById('totalPointCell').textContent    = total;
-    document.getElementById('totalPointBadge').textContent   = 'Total: ' + total + ' poin';
-    document.getElementById('totalPointDisplay').textContent = total;
+    document.getElementById('totalPointCell').textContent     = total;
+    document.getElementById('totalPointDisplay').textContent  = total;
+    document.getElementById('totalPointBadge').textContent    = total + ' poin';
+    document.getElementById('totalPointBadge2').textContent   = 'Total: ' + total + ' poin';
 }
 
 window.addEventListener('load', function () { hitungTotal(); });

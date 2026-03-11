@@ -1,37 +1,13 @@
-<style>
-.detail-aspect-card {
-    border: 1px solid #e9ecef;
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-bottom: 8px;
-    background: #fff;
-    transition: box-shadow 0.15s ease;
-}
-.detail-aspect-card:hover {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-.cond-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 20px;
-}
-.cond-pill.bersih { background: #e8f5e9; color: #2e7d32; }
-.cond-pill.cukup  { background: #fff8e1; color: #f57f17; }
-.cond-pill.kotor  { background: #fce4ec; color: #c62828; }
-</style>
-
-<!-- Content -->
 <div class="container-xxl flex-grow-1 container-p-y">
 
     <!-- Header -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
         <div>
             <h4 class="fw-bold mb-1">
-                <span class="text-muted fw-light">Al-Hadi / <a href="<?= base_url('assessments') ?>" class="text-muted">Penilaian</a> /</span> Detail Penilaian
+                <span class="text-muted fw-light">
+                    Al-Hadi / <a href="<?= base_url('assessments') ?>" class="text-muted">Penilaian</a> /
+                </span>
+                Detail Penilaian
             </h4>
             <p class="text-muted mb-0">Rincian penilaian kebersihan kelas</p>
         </div>
@@ -39,7 +15,7 @@
             <a href="<?= base_url('assessments/edit/' . $assessment->id) ?>" class="btn btn-warning">
                 <i class="bx bx-edit-alt me-1"></i>Edit
             </a>
-            <a href="<?= base_url('assessments') ?>" class="btn btn-outline-secondary">
+            <a href="<?= base_url('assessments/class_detail/' . $assessment->class_id) ?>" class="btn btn-outline-secondary">
                 <i class="bx bx-arrow-back me-1"></i>Kembali
             </a>
         </div>
@@ -60,176 +36,258 @@
         }
     ?>
 
-    <!-- ===== Summary Cards ===== -->
-    <div class="row mb-4">
+    <!-- ── Summary Row: 4 stat cards (Sneat style) ── -->
+    <div class="row g-3 mb-4">
 
-        <!-- Info -->
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm border-start border-4 border-<?= $p_class ?> h-100">
+        <!-- Kelas -->
+        <div class="col-6 col-lg-3">
+            <div class="card h-100">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div>
-                            <p class="text-muted mb-1 small fw-semibold">KELAS</p>
-                            <h5 class="fw-bold mb-0"><?= htmlspecialchars($assessment->class_name) ?></h5>
-                        </div>
-                        <div class="avatar bg-label-<?= $p_class ?> rounded">
-                            <span class="avatar-initial rounded"><i class="bx <?= $p_icon ?> fs-4"></i></span>
+                    <div class="card-title d-flex align-items-start justify-content-between mb-3">
+                        <div class="avatar flex-shrink-0">
+                            <span class="avatar-initial rounded bg-label-primary"><i class="bx bx-building-house"></i></span>
                         </div>
                     </div>
-                    <hr class="my-2">
-                    <div class="row text-center">
-                        <div class="col-6 border-end">
-                            <p class="text-muted mb-1 small fw-semibold">TANGGAL</p>
-                            <strong style="font-size:0.85rem;"><?= date('d M Y', strtotime($assessment->assessment_date)) ?></strong>
-                        </div>
-                        <div class="col-6">
-                            <p class="text-muted mb-1 small fw-semibold">DINILAI OLEH</p>
-                            <strong style="font-size:0.85rem;"><?= htmlspecialchars($assessment->admin_name) ?></strong>
-                        </div>
-                    </div>
+                    <span class="fw-semibold d-block mb-1 text-muted" style="font-size:0.8rem;">Kelas</span>
+                    <h3 class="card-title mb-0 text-primary" style="font-size:1rem;"><?= htmlspecialchars($assessment->class_name) ?></h3>
+                    <small class="text-muted"><?= date('d M Y', strtotime($assessment->assessment_date)) ?></small>
                 </div>
             </div>
         </div>
 
-        <!-- Score -->
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm bg-<?= $p_class ?> text-white h-100">
-                <div class="card-body d-flex flex-column align-items-center justify-content-center text-center">
-                    <p class="mb-1 fw-semibold opacity-75 small">TOTAL POIN</p>
-                    <h1 class="display-3 fw-bold mb-1"><?= $assessment->total_point ?></h1>
-                    <span class="badge bg-white text-<?= $p_class ?> fs-6 px-3 py-2">
+        <!-- Total Poin -->
+        <div class="col-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="card-title d-flex align-items-start justify-content-between mb-3">
+                        <div class="avatar flex-shrink-0">
+                            <span class="avatar-initial rounded bg-label-<?= $p_class ?>"><i class="bx <?= $p_icon ?>"></i></span>
+                        </div>
+                    </div>
+                    <span class="fw-semibold d-block mb-1 text-muted" style="font-size:0.8rem;">Total Poin</span>
+                    <h3 class="card-title mb-0 text-<?= $p_class ?>"><?= $total ?></h3>
+                    <small class="text-<?= $p_class ?> fw-semibold"><?= $predikat ?></small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dinilai Oleh -->
+        <div class="col-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="card-title d-flex align-items-start justify-content-between mb-3">
+                        <div class="avatar flex-shrink-0">
+                            <span class="avatar-initial rounded bg-label-info"><i class="bx bx-user-check"></i></span>
+                        </div>
+                    </div>
+                    <span class="fw-semibold d-block mb-1 text-muted" style="font-size:0.8rem;">Dinilai Oleh</span>
+                    <h3 class="card-title mb-0 text-info" style="font-size:1rem;"><?= htmlspecialchars($assessment->admin_name) ?></h3>
+                    <small class="text-muted"><?= count($details) ?> aspek dinilai</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ringkasan Kondisi -->
+        <div class="col-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="card-title d-flex align-items-start justify-content-between mb-3">
+                        <div class="avatar flex-shrink-0">
+                            <span class="avatar-initial rounded bg-label-secondary"><i class="bx bx-pie-chart-alt-2"></i></span>
+                        </div>
+                    </div>
+                    <span class="fw-semibold d-block mb-1 text-muted" style="font-size:0.8rem;">Kondisi Aspek</span>
+                    <div class="d-flex align-items-center gap-2 flex-wrap mt-1">
+                        <span class="badge bg-label-success"><?= $count_bersih ?> Bersih</span>
+                        <span class="badge bg-label-warning"><?= $count_cukup ?> Cukup</span>
+                        <span class="badge bg-label-danger"><?= $count_kotor ?> Kotor</span>
+                    </div>
+                    <small class="text-muted d-block mt-1">total <?= count($details) ?> aspek</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Detail Aspek Card ── -->
+    <div class="row g-4">
+
+        <!-- Tabel Aspek -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+                    <div>
+                        <h5 class="m-0 me-2">Detail Per Aspek</h5>
+                        <small class="text-muted"><?= count($details) ?> aspek penilaian</small>
+                    </div>
+                    <span class="badge bg-label-<?= $p_class ?> px-3 py-2" style="font-size:0.8125rem;">
                         <i class="bx <?= $p_icon ?> me-1"></i><?= $predikat ?>
                     </span>
                 </div>
-            </div>
-        </div>
 
-        <!-- Ringkasan kondisi -->
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-header py-3">
-                    <h6 class="mb-0"><i class="bx bx-pie-chart me-2 text-primary"></i>Ringkasan Kondisi</h6>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
-                        <span><i class="bx bx-circle text-success me-2"></i>Bersih</span>
-                        <span class="badge bg-success"><?= $count_bersih ?> aspek</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
-                        <span><i class="bx bx-circle text-warning me-2"></i>Cukup</span>
-                        <span class="badge bg-warning text-dark"><?= $count_cukup ?> aspek</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center p-2 bg-light rounded">
-                        <span><i class="bx bx-circle text-danger me-2"></i>Kotor</span>
-                        <span class="badge bg-danger"><?= $count_kotor ?> aspek</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== Detail Aspek ===== -->
-    <div class="card shadow-sm">
-        <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2 py-3">
-            <h5 class="mb-0"><i class="bx bx-list-ul me-2 text-primary"></i>Detail Penilaian Per Aspek</h5>
-            <span class="badge bg-label-primary px-3 py-2" style="font-size:0.8125rem;">
-                <?= count($details) ?> aspek
-            </span>
-        </div>
-        <div class="card-body p-0">
-
-            <!-- ===== DESKTOP TABLE (md ke atas) ===== -->
-            <div class="d-none d-md-block">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th width="60" class="text-center ps-4">No</th>
-                                <th>Aspek Penilaian</th>
-                                <th class="text-center" width="180">Kondisi</th>
-                                <th class="text-center" width="130">Poin Diperoleh</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $no = 1; foreach ($details as $d):
-                                $cond_class = $d->condition_status == 'bersih' ? 'success' : ($d->condition_status == 'cukup' ? 'warning' : 'danger');
-                                $cond_icon  = $d->condition_status == 'bersih' ? '🟢' : ($d->condition_status == 'cukup' ? '🟡' : '🔴');
-                                $cond_label = ucfirst($d->condition_status);
-                            ?>
-                            <tr>
-                                <td class="text-center text-muted ps-4"><?= $no++ ?></td>
-                                <td>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="avatar avatar-sm bg-label-<?= $cond_class ?> rounded">
-                                            <span class="avatar-initial rounded">
-                                                <i class="bx bx-check-shield" style="font-size:13px;"></i>
-                                            </span>
+                <!-- DESKTOP TABLE -->
+                <div class="d-none d-md-block">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="50" class="text-center ps-4">No</th>
+                                    <th>Aspek Penilaian</th>
+                                    <th class="text-center" width="160">Kondisi</th>
+                                    <th class="text-center" width="120">Poin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $no = 1; foreach ($details as $d):
+                                    $cp = $d->condition_status == 'bersih' ? 'success' : ($d->condition_status == 'cukup' ? 'warning' : 'danger');
+                                    $cl = ucfirst($d->condition_status);
+                                ?>
+                                <tr>
+                                    <td class="text-center text-muted ps-4"><?= $no++ ?></td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="avatar avatar-sm flex-shrink-0">
+                                                <span class="avatar-initial rounded bg-label-<?= $cp ?>">
+                                                    <i class="bx bx-check-shield" style="font-size:13px;"></i>
+                                                </span>
+                                            </div>
+                                            <strong><?= htmlspecialchars($d->aspect_name) ?></strong>
                                         </div>
-                                        <strong><?= htmlspecialchars($d->aspect_name) ?></strong>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <span class="cond-pill <?= $d->condition_status ?>">
-                                        <?= $cond_icon ?> <?= $cond_label ?>
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="fw-bold fs-5 text-<?= $cond_class ?>"><?= $d->point ?></span>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                        <tfoot class="table-light">
-                            <tr>
-                                <td colspan="3" class="text-end fw-bold pe-4">Total Poin:</td>
-                                <td class="text-center fw-bold fs-4 text-<?= $p_class ?> pe-4"><?= $assessment->total_point ?></td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-label-<?= $cp ?>"><?= $cl ?></span>
+                                    </td>
+                                    <td class="text-center">
+                                        <strong class="text-<?= $cp ?>" style="font-size:1.1rem;"><?= $d->point ?></strong>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <td colspan="3" class="text-end fw-bold pe-3">Total Poin:</td>
+                                    <td class="text-center">
+                                        <strong class="text-<?= $p_class ?>" style="font-size:1.25rem;"><?= $total ?></strong>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
-            </div>
 
-            <!-- ===== MOBILE CARDS (di bawah md) ===== -->
-            <div class="d-md-none p-3">
-                <?php $no = 1; foreach ($details as $d):
-                    $cond_class = $d->condition_status == 'bersih' ? 'success' : ($d->condition_status == 'cukup' ? 'warning' : 'danger');
-                    $cond_icon  = $d->condition_status == 'bersih' ? '🟢' : ($d->condition_status == 'cukup' ? '🟡' : '🔴');
-                    $cond_label = ucfirst($d->condition_status);
-                ?>
-                <div class="detail-aspect-card d-flex align-items-center justify-content-between gap-3">
-                    <div class="d-flex align-items-center gap-3 overflow-hidden flex-grow-1">
-                        <span class="text-muted fw-semibold flex-shrink-0" style="min-width:20px;font-size:0.8rem;"><?= $no++ ?></span>
-                        <div class="avatar avatar-sm bg-label-<?= $cond_class ?> rounded flex-shrink-0">
-                            <span class="avatar-initial rounded">
+                <!-- MOBILE -->
+                <div class="d-md-none p-3">
+                    <?php $no = 1; foreach ($details as $d):
+                        $cp = $d->condition_status == 'bersih' ? 'success' : ($d->condition_status == 'cukup' ? 'warning' : 'danger');
+                        $cl = ucfirst($d->condition_status);
+                    ?>
+                    <div class="d-flex align-items-center gap-3 p-2 mb-2 rounded-3 border bg-white">
+                        <span class="text-muted fw-semibold flex-shrink-0" style="min-width:18px;font-size:0.8rem;"><?= $no++ ?></span>
+                        <div class="avatar avatar-sm flex-shrink-0">
+                            <span class="avatar-initial rounded bg-label-<?= $cp ?>">
                                 <i class="bx bx-check-shield" style="font-size:13px;"></i>
                             </span>
                         </div>
-                        <div class="overflow-hidden">
-                            <strong class="d-block text-truncate" style="font-size:0.875rem;">
-                                <?= htmlspecialchars($d->aspect_name) ?>
-                            </strong>
-                            <span class="cond-pill <?= $d->condition_status ?> mt-1">
-                                <?= $cond_icon ?> <?= $cond_label ?>
-                            </span>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <strong class="d-block text-truncate" style="font-size:0.875rem;"><?= htmlspecialchars($d->aspect_name) ?></strong>
+                            <span class="badge bg-label-<?= $cp ?>" style="font-size:0.7rem;"><?= $cl ?></span>
+                        </div>
+                        <div class="text-center flex-shrink-0">
+                            <strong class="text-<?= $cp ?>" style="font-size:1.2rem;"><?= $d->point ?></strong>
+                            <div class="text-muted" style="font-size:0.65rem;">poin</div>
                         </div>
                     </div>
-                    <div class="text-center flex-shrink-0">
-                        <span class="fw-bold fs-4 text-<?= $cond_class ?>"><?= $d->point ?></span>
-                        <div style="font-size:0.65rem;color:#aaa;">poin</div>
+                    <?php endforeach; ?>
+                    <!-- Total -->
+                    <div class="d-flex justify-content-between align-items-center p-3 mt-2 rounded-3"
+                         style="background:#f8f9ff;border:1px solid #e0e1ff;">
+                        <span class="fw-semibold text-muted">Total Poin</span>
+                        <strong class="text-<?= $p_class ?>" style="font-size:1.5rem;"><?= $total ?></strong>
                     </div>
                 </div>
-                <?php endforeach; ?>
+            </div>
+        </div>
 
-                <!-- Total mobile -->
-                <div class="d-flex justify-content-between align-items-center p-3 mt-2 rounded-3 border fw-bold"
-                     style="background:#f8f9ff;">
-                    <span class="text-muted">Total Poin</span>
-                    <span class="fs-3 text-<?= $p_class ?>"><?= $assessment->total_point ?></span>
+        <!-- Ringkasan sidebar — Sneat "Transactions" list style -->
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="m-0 me-2">Ringkasan Kondisi</h5>
+                    <small class="text-muted">per aspek penilaian</small>
+                </div>
+                <div class="card-body px-0">
+                    <ul class="p-0 m-0">
+                        <!-- Bersih -->
+                        <li class="d-flex align-items-center gap-3 px-4 mb-3 pb-1">
+                            <div class="avatar flex-shrink-0">
+                                <span class="avatar-initial rounded bg-label-success"><i class="bx bx-check-circle"></i></span>
+                            </div>
+                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                <div>
+                                    <h6 class="mb-0">Bersih</h6>
+                                    <small class="text-muted">kondisi baik</small>
+                                </div>
+                                <div class="text-end">
+                                    <h6 class="mb-0 text-success"><?= $count_bersih ?></h6>
+                                    <small class="text-muted">aspek</small>
+                                </div>
+                            </div>
+                        </li>
+                        <!-- Cukup -->
+                        <li class="d-flex align-items-center gap-3 px-4 mb-3 pb-1">
+                            <div class="avatar flex-shrink-0">
+                                <span class="avatar-initial rounded bg-label-warning"><i class="bx bx-minus-circle"></i></span>
+                            </div>
+                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                <div>
+                                    <h6 class="mb-0">Cukup</h6>
+                                    <small class="text-muted">perlu perhatian</small>
+                                </div>
+                                <div class="text-end">
+                                    <h6 class="mb-0 text-warning"><?= $count_cukup ?></h6>
+                                    <small class="text-muted">aspek</small>
+                                </div>
+                            </div>
+                        </li>
+                        <!-- Kotor -->
+                        <li class="d-flex align-items-center gap-3 px-4 mb-3 pb-1">
+                            <div class="avatar flex-shrink-0">
+                                <span class="avatar-initial rounded bg-label-danger"><i class="bx bx-x-circle"></i></span>
+                            </div>
+                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                <div>
+                                    <h6 class="mb-0">Kotor</h6>
+                                    <small class="text-muted">perlu segera dibersihkan</small>
+                                </div>
+                                <div class="text-end">
+                                    <h6 class="mb-0 text-danger"><?= $count_kotor ?></h6>
+                                    <small class="text-muted">aspek</small>
+                                </div>
+                            </div>
+                        </li>
+                        <!-- Divider total -->
+                        <li class="px-4 pt-2" style="border-top:1px solid #eee;">
+                            <div class="d-flex align-items-center justify-content-between py-2">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="avatar flex-shrink-0">
+                                        <span class="avatar-initial rounded bg-label-<?= $p_class ?>">
+                                            <i class="bx <?= $p_icon ?>"></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">Predikat Akhir</h6>
+                                        <small class="text-muted">berdasarkan total poin</small>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <h5 class="mb-0 text-<?= $p_class ?>"><?= $total ?></h5>
+                                    <span class="badge bg-label-<?= $p_class ?>"><?= $predikat ?></span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
-            <!-- ===== / MOBILE CARDS ===== -->
-
         </div>
-    </div>
 
+    </div>
 </div>
